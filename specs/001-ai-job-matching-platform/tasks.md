@@ -132,12 +132,12 @@ Based on plan.md structure (Spring Modulith):
 
 ### Company Module (US2)
 
-- [ ] T049 [P] [US2] Create V6__create_companies.sql migration in `src/main/resources/db/migration/V6__create_companies.sql`
-- [ ] T050 [US2] Create Company entity (aggregate root) in `src/main/java/com/isaac/job_matching/company/Company.java`
-- [ ] T051 [US2] Create CompanyRepository in `src/main/java/com/isaac/job_matching/company/CompanyRepository.java`
-- [ ] T052 [US2] Create CompanyService public API in `src/main/java/com/isaac/job_matching/company/CompanyService.java`
-- [ ] T053 [P] [US2] Create CompanyVerificationService in `src/main/java/com/isaac/job_matching/company/internal/CompanyVerificationService.java`
-- [ ] T054 [US2] Create CompanyController in `src/main/java/com/isaac/job_matching/company/internal/CompanyController.java`
+- [X] T049 [P] [US2] Create V6__create_companies.sql migration in `src/main/resources/db/migration/V6__create_companies.sql`
+- [X] T050 [US2] Create Company entity (aggregate root) in `src/main/java/com/isaac/job_matching/company/Company.java`
+- [X] T051 [US2] Create CompanyRepository in `src/main/java/com/isaac/job_matching/company/CompanyRepository.java`
+- [X] T052 [US2] Create CompanyService public API in `src/main/java/com/isaac/job_matching/company/CompanyService.java`
+- [X] T053 [P] [US2] Create CompanyVerificationService in `src/main/java/com/isaac/job_matching/company/internal/CompanyVerificationService.java`
+- [X] T054 [US2] Create CompanyController in `src/main/java/com/isaac/job_matching/company/internal/CompanyController.java`
 
 ### Job Module (US2)
 
