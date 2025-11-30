@@ -31,3 +31,25 @@ build/
 
 ### VS Code ###
 .vscode/
+
+### Environment & Logs ###
+.env
+.env.*
+!.env.example
+*.log
+logs/
+
+### Operating System ###
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+### Docker ###
+docker-compose.override.yml
+
+### Application ###
+*.jar
+*.war
+*.ear
+application-local.yaml.bak
