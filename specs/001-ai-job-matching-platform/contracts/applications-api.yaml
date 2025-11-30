@@ -1,0 +1,534 @@
+openapi: 3.1.0
+info:
+  title: Job Matching Platform - Applications API
+  version: 1.0.0
+  description: Application management endpoints
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+paths:
+  /applications:
+    get:
+      summary: Get my applications (job seeker)
+      operationId: getMyApplications
+      tags: [Applications]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [APPLIED, UNDER_REVIEW, INTERVIEWED, OFFERED, REJECTED, WITHDRAWN]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MyApplicationsResponse'
+
+  /applications/{id}:
+    get:
+      summary: Get application details
+      operationId: getApplication
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Application details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationDetailResponse'
+        '404':
+          description: Application not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /applications/{id}/withdraw:
+    post:
+      summary: Withdraw application (job seeker)
+      operationId: withdrawApplication
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Application withdrawn
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        '400':
+          description: Cannot withdraw (already processed)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /applications/{id}/status:
+    put:
+      summary: Update application status (employer)
+      operationId: updateApplicationStatus
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateStatusRequest'
+      responses:
+        '200':
+          description: Status updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        '403':
+          description: Not job owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /applications/bulk-status:
+    put:
+      summary: Bulk update application statuses (employer)
+      operationId: bulkUpdateStatus
+      tags: [Applications]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BulkStatusUpdateRequest'
+      responses:
+        '200':
+          description: Statuses updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BulkUpdateResponse'
+
+  /applications/{id}/schedule-interview:
+    post:
+      summary: Schedule interview (employer)
+      operationId: scheduleInterview
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ScheduleInterviewRequest'
+      responses:
+        '200':
+          description: Interview scheduled
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InterviewResponse'
+
+  /applications/{id}/timeline:
+    get:
+      summary: Get application timeline/history
+      operationId: getApplicationTimeline
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Application timeline
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/TimelineEvent'
+
+  /bookmarks:
+    get:
+      summary: Get bookmarked jobs
+      operationId: getBookmarks
+      tags: [Bookmarks]
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of bookmarked jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookmarkListResponse'
+
+  /bookmarks/{jobId}:
+    post:
+      summary: Bookmark a job
+      operationId: bookmarkJob
+      tags: [Bookmarks]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '201':
+          description: Job bookmarked
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookmarkResponse'
+
+    delete:
+      summary: Remove bookmark
+      operationId: removeBookmark
+      tags: [Bookmarks]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Bookmark removed
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    MyApplicationsResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyApplication'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    MyApplication:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        job:
+          $ref: '#/components/schemas/JobSummary'
+        status:
+          type: string
+        statusDetails:
+          type: object
+          description: Status-specific data (e.g., interview date, rejection reason)
+        matchScore:
+          type: integer
+        appliedAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    ApplicationDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/MyApplication'
+        - type: object
+          properties:
+            matchBreakdown:
+              $ref: '#/components/schemas/MatchBreakdown'
+            resumeUsed:
+              $ref: '#/components/schemas/ResumeSummary'
+            timeline:
+              type: array
+              items:
+                $ref: '#/components/schemas/TimelineEvent'
+
+    ApplicationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        status:
+          type: string
+        updatedAt:
+          type: string
+          format: date-time
+
+    UpdateStatusRequest:
+      type: object
+      required: [status]
+      properties:
+        status:
+          type: string
+          enum: [UNDER_REVIEW, INTERVIEWED, OFFERED, REJECTED]
+        feedback:
+          type: string
+          description: Optional feedback (for interviews/rejections)
+        salary:
+          type: number
+          description: Offered salary (for OFFERED status)
+        salaryCurrency:
+          type: string
+          default: USD
+        responseDeadline:
+          type: string
+          format: date
+          description: Deadline to respond to offer
+
+    BulkStatusUpdateRequest:
+      type: object
+      required: [applicationIds, status]
+      properties:
+        applicationIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        status:
+          type: string
+          enum: [UNDER_REVIEW, REJECTED]
+        reason:
+          type: string
+
+    BulkUpdateResponse:
+      type: object
+      properties:
+        successCount:
+          type: integer
+        failedCount:
+          type: integer
+        errors:
+          type: array
+          items:
+            type: object
+            properties:
+              applicationId:
+                type: string
+              error:
+                type: string
+
+    ScheduleInterviewRequest:
+      type: object
+      required: [dateTime]
+      properties:
+        dateTime:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+          description: Duration in minutes
+          default: 60
+        type:
+          type: string
+          enum: [PHONE, VIDEO, IN_PERSON]
+          default: VIDEO
+        location:
+          type: string
+          description: Meeting link or address
+        notes:
+          type: string
+
+    InterviewResponse:
+      type: object
+      properties:
+        applicationId:
+          type: string
+          format: uuid
+        interviewDateTime:
+          type: string
+          format: date-time
+        duration:
+          type: integer
+        type:
+          type: string
+        location:
+          type: string
+        calendarInviteSent:
+          type: boolean
+
+    TimelineEvent:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        event:
+          type: string
+          enum: [APPLIED, VIEWED, STATUS_CHANGED, INTERVIEW_SCHEDULED, MESSAGE_SENT]
+        oldStatus:
+          type: string
+        newStatus:
+          type: string
+        details:
+          type: object
+
+    JobSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        company:
+          type: string
+        companyLogoUrl:
+          type: string
+        location:
+          type: string
+        remoteOption:
+          type: string
+        status:
+          type: string
+          description: Job status (ACTIVE, PAUSED, CLOSED)
+
+    MatchBreakdown:
+      type: object
+      properties:
+        skillsScore:
+          type: integer
+        experienceScore:
+          type: integer
+        locationScore:
+          type: integer
+        salaryScore:
+          type: integer
+        matchedSkills:
+          type: array
+          items:
+            type: string
+        missingMustHave:
+          type: array
+          items:
+            type: string
+        explanation:
+          type: string
+
+    ResumeSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+
+    BookmarkListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/BookmarkedJob'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    BookmarkedJob:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        job:
+          $ref: '#/components/schemas/JobSummary'
+        bookmarkedAt:
+          type: string
+          format: date-time
+        hasApplied:
+          type: boolean
+
+    BookmarkResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        bookmarkedAt:
+          type: string
+          format: date-time
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string

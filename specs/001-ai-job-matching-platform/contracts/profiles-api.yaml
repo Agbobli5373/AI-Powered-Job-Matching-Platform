@@ -1,0 +1,874 @@
+openapi: 3.1.0
+info:
+  title: Job Matching Platform - Profiles API
+  version: 1.0.0
+  description: Profile and candidate management endpoints
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+paths:
+  /profile:
+    get:
+      summary: Get current user's profile
+      operationId: getMyProfile
+      tags: [Profile]
+      responses:
+        '200':
+          description: Profile details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+        '404':
+          description: Profile not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update profile
+      operationId: updateProfile
+      tags: [Profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProfileRequest'
+      responses:
+        '200':
+          description: Profile updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+
+  /profile/work-experience:
+    post:
+      summary: Add work experience
+      operationId: addWorkExperience
+      tags: [Profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceInput'
+      responses:
+        '201':
+          description: Work experience added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+
+  /profile/work-experience/{id}:
+    put:
+      summary: Update work experience
+      operationId: updateWorkExperience
+      tags: [Profile]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WorkExperienceInput'
+      responses:
+        '200':
+          description: Work experience updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkExperience'
+
+    delete:
+      summary: Delete work experience
+      operationId: deleteWorkExperience
+      tags: [Profile]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Work experience deleted
+
+  /profile/education:
+    post:
+      summary: Add education
+      operationId: addEducation
+      tags: [Profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationInput'
+      responses:
+        '201':
+          description: Education added
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+
+  /profile/education/{id}:
+    put:
+      summary: Update education
+      operationId: updateEducation
+      tags: [Profile]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EducationInput'
+      responses:
+        '200':
+          description: Education updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Education'
+
+    delete:
+      summary: Delete education
+      operationId: deleteEducation
+      tags: [Profile]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Education deleted
+
+  /profile/skills:
+    put:
+      summary: Update profile skills
+      operationId: updateSkills
+      tags: [Profile]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                skills:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/ProfileSkillInput'
+      responses:
+        '200':
+          description: Skills updated
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileSkill'
+
+  /profile/resume:
+    get:
+      summary: Get all resumes
+      operationId: getResumes
+      tags: [Resume]
+      responses:
+        '200':
+          description: List of resumes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ResumeResponse'
+
+    post:
+      summary: Upload resume
+      operationId: uploadResume
+      tags: [Resume]
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+                isDefault:
+                  type: boolean
+                  default: false
+      responses:
+        '201':
+          description: Resume uploaded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeResponse'
+        '400':
+          description: Invalid file format or size
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /profile/resume/{id}:
+    get:
+      summary: Get resume details
+      operationId: getResume
+      tags: [Resume]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Resume details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeDetailResponse'
+
+    delete:
+      summary: Delete resume
+      operationId: deleteResume
+      tags: [Resume]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Resume deleted
+
+  /profile/resume/{id}/default:
+    post:
+      summary: Set as default resume
+      operationId: setDefaultResume
+      tags: [Resume]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Default resume set
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResumeResponse'
+
+  /profile/resume/{id}/apply-parsed:
+    post:
+      summary: Apply parsed resume data to profile
+      operationId: applyParsedData
+      tags: [Resume]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                applyWorkExperience:
+                  type: boolean
+                  default: true
+                applyEducation:
+                  type: boolean
+                  default: true
+                applySkills:
+                  type: boolean
+                  default: true
+      responses:
+        '200':
+          description: Parsed data applied
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProfileResponse'
+
+  /candidates:
+    get:
+      summary: Search candidates (employer only)
+      operationId: searchCandidates
+      tags: [Candidates]
+      parameters:
+        - name: skills
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: experienceMin
+          in: query
+          schema:
+            type: integer
+        - name: experienceMax
+          in: query
+          schema:
+            type: integer
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: availability
+          in: query
+          schema:
+            type: string
+            enum: [IMMEDIATE, TWO_WEEKS, ONE_MONTH, THREE_MONTHS]
+        - name: remotePreference
+          in: query
+          schema:
+            type: string
+            enum: [REMOTE_ONLY, HYBRID, ONSITE_ONLY, FLEXIBLE]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of candidates
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateSearchResponse'
+        '403':
+          description: Not an employer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /candidates/{id}:
+    get:
+      summary: Get candidate details (employer only)
+      operationId: getCandidate
+      tags: [Candidates]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Candidate details (public or full based on access)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateResponse'
+
+  /candidates/{id}/request-access:
+    post:
+      summary: Request access to candidate sensitive data
+      operationId: requestCandidateAccess
+      tags: [Candidates]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Access request sent
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessRequestResponse'
+
+  /profile/access-requests:
+    get:
+      summary: Get access requests for my profile
+      operationId: getAccessRequests
+      tags: [Profile]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [PENDING, APPROVED, DENIED]
+      responses:
+        '200':
+          description: List of access requests
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessRequest'
+
+  /profile/access-requests/{id}/respond:
+    post:
+      summary: Respond to access request
+      operationId: respondToAccessRequest
+      tags: [Profile]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [approved]
+              properties:
+                approved:
+                  type: boolean
+      responses:
+        '200':
+          description: Response recorded
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccessRequest'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ProfileResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        firstName:
+          type: string
+        lastName:
+          type: string
+        bio:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        salaryExpectation:
+          $ref: '#/components/schemas/SalaryRange'
+        availability:
+          type: string
+        remotePreference:
+          type: string
+        profileComplete:
+          type: boolean
+        searchable:
+          type: boolean
+        workExperiences:
+          type: array
+          items:
+            $ref: '#/components/schemas/WorkExperience'
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/Education'
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProfileSkill'
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    UpdateProfileRequest:
+      type: object
+      properties:
+        firstName:
+          type: string
+          maxLength: 100
+        lastName:
+          type: string
+          maxLength: 100
+        bio:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        salaryExpectationMin:
+          type: number
+        salaryExpectationMax:
+          type: number
+        salaryCurrency:
+          type: string
+          default: USD
+        availability:
+          type: string
+          enum: [IMMEDIATE, TWO_WEEKS, ONE_MONTH, THREE_MONTHS, NOT_LOOKING]
+        remotePreference:
+          type: string
+          enum: [REMOTE_ONLY, HYBRID, ONSITE_ONLY, FLEXIBLE]
+        searchable:
+          type: boolean
+
+    WorkExperienceInput:
+      type: object
+      required: [company, role, startDate]
+      properties:
+        company:
+          type: string
+          maxLength: 255
+        role:
+          type: string
+          maxLength: 255
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+
+    WorkExperience:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        company:
+          type: string
+        role:
+          type: string
+        startDate:
+          type: string
+          format: date
+        endDate:
+          type: string
+          format: date
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        isCurrent:
+          type: boolean
+
+    EducationInput:
+      type: object
+      required: [institution]
+      properties:
+        institution:
+          type: string
+          maxLength: 255
+        degree:
+          type: string
+          maxLength: 100
+        field:
+          type: string
+          maxLength: 100
+        graduationYear:
+          type: integer
+
+    Education:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        institution:
+          type: string
+        degree:
+          type: string
+        field:
+          type: string
+        graduationYear:
+          type: integer
+
+    ProfileSkillInput:
+      type: object
+      required: [skillName, proficiencyLevel]
+      properties:
+        skillName:
+          type: string
+        proficiencyLevel:
+          type: string
+          enum: [BEGINNER, INTERMEDIATE, EXPERT]
+
+    ProfileSkill:
+      type: object
+      properties:
+        skillId:
+          type: string
+          format: uuid
+        skillName:
+          type: string
+        category:
+          type: string
+        proficiencyLevel:
+          type: string
+
+    ResumeResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        fileName:
+          type: string
+        fileSize:
+          type: integer
+        contentType:
+          type: string
+        parseStatus:
+          type: string
+        isDefault:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+
+    ResumeDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/ResumeResponse'
+        - type: object
+          properties:
+            downloadUrl:
+              type: string
+            parsedContent:
+              $ref: '#/components/schemas/ParsedResumeData'
+
+    ParsedResumeData:
+      type: object
+      properties:
+        fullName:
+          type: string
+        email:
+          type: string
+        phone:
+          type: string
+        summary:
+          type: string
+        workExperiences:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParsedWorkExperience'
+        education:
+          type: array
+          items:
+            $ref: '#/components/schemas/ParsedEducation'
+        skills:
+          type: array
+          items:
+            type: string
+        certifications:
+          type: array
+          items:
+            type: string
+
+    ParsedWorkExperience:
+      type: object
+      properties:
+        company:
+          type: string
+        role:
+          type: string
+        startDate:
+          type: string
+        endDate:
+          type: string
+        description:
+          type: string
+
+    ParsedEducation:
+      type: object
+      properties:
+        institution:
+          type: string
+        degree:
+          type: string
+        field:
+          type: string
+        graduationYear:
+          type: integer
+
+    CandidateSearchResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateSummary'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    CandidateSummary:
+      type: object
+      properties:
+        profileId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        headline:
+          type: string
+        location:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        experienceYears:
+          type: integer
+        availability:
+          type: string
+        hasAccess:
+          type: boolean
+          description: Whether employer has access to sensitive data
+
+    CandidateResponse:
+      allOf:
+        - $ref: '#/components/schemas/CandidateSummary'
+        - type: object
+          properties:
+            bio:
+              type: string
+            workExperiences:
+              type: array
+              items:
+                $ref: '#/components/schemas/WorkExperience'
+            education:
+              type: array
+              items:
+                $ref: '#/components/schemas/Education'
+            # Sensitive fields (only if hasAccess=true)
+            email:
+              type: string
+            phone:
+              type: string
+            salaryExpectation:
+              $ref: '#/components/schemas/SalaryRange'
+            resumeUrl:
+              type: string
+
+    AccessRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        employerId:
+          type: string
+          format: uuid
+        employerName:
+          type: string
+        companyName:
+          type: string
+        status:
+          type: string
+          enum: [PENDING, APPROVED, DENIED]
+        requestedAt:
+          type: string
+          format: date-time
+        respondedAt:
+          type: string
+          format: date-time
+
+    AccessRequestResponse:
+      type: object
+      properties:
+        requestId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        message:
+          type: string
+
+    Location:
+      type: object
+      properties:
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+
+    SalaryRange:
+      type: object
+      properties:
+        min:
+          type: number
+        max:
+          type: number
+        currency:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string

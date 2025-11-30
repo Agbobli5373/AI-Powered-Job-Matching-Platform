@@ -1,0 +1,578 @@
+openapi: 3.1.0
+info:
+  title: Job Matching Platform - Matching API
+  version: 1.0.0
+  description: AI-powered matching and recommendation endpoints
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+paths:
+  /matching/recommendations:
+    get:
+      summary: Get AI job recommendations for candidate
+      operationId: getJobRecommendations
+      tags: [AI Matching]
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: minScore
+          in: query
+          description: Minimum match score (0-100)
+          schema:
+            type: integer
+            default: 50
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: Job recommendations
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationsResponse'
+        '400':
+          description: Profile incomplete
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /matching/recommendations/refresh:
+    post:
+      summary: Force refresh recommendations
+      operationId: refreshRecommendations
+      tags: [AI Matching]
+      description: Triggers recalculation of recommendations (rate limited)
+      responses:
+        '202':
+          description: Refresh scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  estimatedCompletion:
+                    type: string
+                    format: date-time
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /matching/jobs/{jobId}/candidates:
+    get:
+      summary: Get candidate matches for a job (employer)
+      operationId: getCandidateMatches
+      tags: [AI Matching]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            maximum: 200
+        - name: minScore
+          in: query
+          schema:
+            type: integer
+            default: 60
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: includeApplied
+          in: query
+          description: Include candidates who already applied
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: Candidate matches
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CandidateMatchesResponse'
+        '403':
+          description: Not job owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /matching/compare:
+    post:
+      summary: Calculate match score between candidate and job
+      operationId: calculateMatch
+      tags: [AI Matching]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CalculateMatchRequest'
+      responses:
+        '200':
+          description: Match calculation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchResult'
+
+  /matching/explain/{applicationId}:
+    get:
+      summary: Get detailed match explanation
+      operationId: getMatchExplanation
+      tags: [AI Matching]
+      parameters:
+        - name: applicationId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Match explanation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchExplanation'
+
+  /matching/feedback:
+    post:
+      summary: Submit feedback on recommendation
+      operationId: submitMatchFeedback
+      tags: [AI Matching]
+      description: Used to improve AI model based on user feedback
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MatchFeedbackRequest'
+      responses:
+        '200':
+          description: Feedback recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+
+  /matching/similar-jobs/{jobId}:
+    get:
+      summary: Find jobs similar to a specific job
+      operationId: getSimilarJobs
+      tags: [Discovery]
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Similar jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimilarJobsResponse'
+
+  /matching/career-path:
+    get:
+      summary: Get career progression suggestions
+      operationId: getCareerPath
+      tags: [Discovery]
+      description: AI-powered career advancement suggestions based on profile
+      responses:
+        '200':
+          description: Career path suggestions
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CareerPathResponse'
+
+  /matching/skill-gaps:
+    get:
+      summary: Analyze skill gaps for desired roles
+      operationId: analyzeSkillGaps
+      tags: [Discovery]
+      parameters:
+        - name: targetRoles
+          in: query
+          description: Desired job titles
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '200':
+          description: Skill gap analysis
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SkillGapAnalysis'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    RecommendationsResponse:
+      type: object
+      properties:
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobRecommendation'
+        page:
+          type: integer
+        totalCount:
+          type: integer
+        lastCalculated:
+          type: string
+          format: date-time
+        profileCompleteness:
+          type: integer
+          description: Profile completeness percentage affecting match quality
+
+    JobRecommendation:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobSummary'
+        matchScore:
+          type: integer
+          minimum: 0
+          maximum: 100
+        matchBreakdown:
+          $ref: '#/components/schemas/MatchBreakdown'
+        recommendationReason:
+          type: string
+          description: Human-readable explanation
+        strengthsForRole:
+          type: array
+          items:
+            type: string
+        improvementAreas:
+          type: array
+          items:
+            type: string
+        hasApplied:
+          type: boolean
+        isBookmarked:
+          type: boolean
+
+    CandidateMatchesResponse:
+      type: object
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        candidates:
+          type: array
+          items:
+            $ref: '#/components/schemas/CandidateMatch'
+        page:
+          type: integer
+        totalCount:
+          type: integer
+
+    CandidateMatch:
+      type: object
+      properties:
+        candidateId:
+          type: string
+          format: uuid
+        candidateSummary:
+          $ref: '#/components/schemas/CandidateSummary'
+        matchScore:
+          type: integer
+        matchBreakdown:
+          $ref: '#/components/schemas/MatchBreakdown'
+        hasApplied:
+          type: boolean
+        applicationId:
+          type: string
+          format: uuid
+          nullable: true
+        canContact:
+          type: boolean
+          description: Whether employer can request to contact
+
+    CalculateMatchRequest:
+      type: object
+      properties:
+        candidateId:
+          type: string
+          format: uuid
+        jobId:
+          type: string
+          format: uuid
+      description: At least one of candidateId (uses current user) or explicit values required
+
+    MatchResult:
+      type: object
+      properties:
+        overallScore:
+          type: integer
+        breakdown:
+          $ref: '#/components/schemas/MatchBreakdown'
+        recommendation:
+          type: string
+          enum: [HIGHLY_RECOMMENDED, GOOD_FIT, MODERATE_FIT, LOW_FIT, NOT_RECOMMENDED]
+        confidence:
+          type: number
+          description: AI confidence level (0.0-1.0)
+
+    MatchBreakdown:
+      type: object
+      properties:
+        skillsScore:
+          type: integer
+          description: Score 0-100 for skill alignment
+        experienceScore:
+          type: integer
+          description: Score 0-100 for experience match
+        educationScore:
+          type: integer
+          description: Score 0-100 for education requirements
+        locationScore:
+          type: integer
+          description: Score 0-100 for location/remote compatibility
+        salaryScore:
+          type: integer
+          description: Score 0-100 for salary expectations alignment
+        cultureFitScore:
+          type: integer
+          description: Score 0-100 for company culture alignment
+        matchedSkills:
+          type: array
+          items:
+            type: string
+        missingRequiredSkills:
+          type: array
+          items:
+            type: string
+        bonusSkills:
+          type: array
+          items:
+            type: string
+          description: Nice-to-have skills the candidate has
+
+    MatchExplanation:
+      type: object
+      properties:
+        overallAssessment:
+          type: string
+        strengths:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExplanationPoint'
+        gaps:
+          type: array
+          items:
+            $ref: '#/components/schemas/ExplanationPoint'
+        suggestions:
+          type: array
+          items:
+            type: string
+          description: How candidate could improve for this role
+
+    ExplanationPoint:
+      type: object
+      properties:
+        category:
+          type: string
+          enum: [SKILLS, EXPERIENCE, EDUCATION, LOCATION, SALARY, CULTURE]
+        title:
+          type: string
+        description:
+          type: string
+        impact:
+          type: string
+          enum: [HIGH, MEDIUM, LOW]
+
+    MatchFeedbackRequest:
+      type: object
+      required: [jobId, feedbackType]
+      properties:
+        jobId:
+          type: string
+          format: uuid
+        feedbackType:
+          type: string
+          enum: [RELEVANT, NOT_RELEVANT, APPLIED, BOOKMARKED, HIDDEN]
+        reason:
+          type: string
+          description: Optional explanation for feedback
+
+    SimilarJobsResponse:
+      type: object
+      properties:
+        sourceJob:
+          $ref: '#/components/schemas/JobSummary'
+        similarJobs:
+          type: array
+          items:
+            $ref: '#/components/schemas/SimilarJob'
+
+    SimilarJob:
+      type: object
+      properties:
+        job:
+          $ref: '#/components/schemas/JobSummary'
+        similarityScore:
+          type: integer
+        commonSkills:
+          type: array
+          items:
+            type: string
+
+    CareerPathResponse:
+      type: object
+      properties:
+        currentLevel:
+          type: string
+          description: Estimated current career level
+        suggestions:
+          type: array
+          items:
+            $ref: '#/components/schemas/CareerSuggestion'
+
+    CareerSuggestion:
+      type: object
+      properties:
+        targetRole:
+          type: string
+        timeframe:
+          type: string
+          description: e.g., "1-2 years"
+        requiredSkills:
+          type: array
+          items:
+            type: string
+        currentSkillMatch:
+          type: integer
+        availableJobs:
+          type: integer
+          description: Number of matching jobs currently available
+
+    SkillGapAnalysis:
+      type: object
+      properties:
+        targetRoles:
+          type: array
+          items:
+            type: string
+        currentSkills:
+          type: array
+          items:
+            type: string
+        missingSkills:
+          type: array
+          items:
+            $ref: '#/components/schemas/SkillGap'
+        recommendations:
+          type: array
+          items:
+            type: string
+          description: Learning recommendations
+
+    SkillGap:
+      type: object
+      properties:
+        skill:
+          type: string
+        importance:
+          type: string
+          enum: [CRITICAL, IMPORTANT, NICE_TO_HAVE]
+        demandTrend:
+          type: string
+          enum: [INCREASING, STABLE, DECREASING]
+
+    JobSummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        company:
+          type: string
+        companyLogoUrl:
+          type: string
+        location:
+          type: string
+        remoteOption:
+          type: string
+        salaryRange:
+          type: string
+        employmentType:
+          type: string
+        postedAt:
+          type: string
+          format: date-time
+
+    CandidateSummary:
+      type: object
+      properties:
+        headline:
+          type: string
+        yearsOfExperience:
+          type: integer
+        topSkills:
+          type: array
+          items:
+            type: string
+        location:
+          type: string
+        profilePhotoUrl:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string

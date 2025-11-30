@@ -1,0 +1,693 @@
+openapi: 3.1.0
+info:
+  title: Job Matching Platform - Jobs API
+  version: 1.0.0
+  description: Job posting and management endpoints
+
+servers:
+  - url: /api
+
+security:
+  - bearerAuth: []
+
+paths:
+  /jobs:
+    get:
+      summary: Search jobs
+      operationId: searchJobs
+      tags: [Jobs]
+      security: []
+      parameters:
+        - name: keyword
+          in: query
+          schema:
+            type: string
+        - name: location
+          in: query
+          schema:
+            type: string
+        - name: skills
+          in: query
+          schema:
+            type: array
+            items:
+              type: string
+        - name: remoteOption
+          in: query
+          schema:
+            type: string
+            enum: [REMOTE, HYBRID, ONSITE]
+        - name: experienceLevel
+          in: query
+          schema:
+            type: string
+            enum: [ENTRY, MID, SENIOR, LEAD, EXECUTIVE]
+        - name: employmentType
+          in: query
+          schema:
+            type: string
+            enum: [FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE]
+        - name: salaryMin
+          in: query
+          schema:
+            type: number
+        - name: salaryMax
+          in: query
+          schema:
+            type: number
+        - name: postedWithin
+          in: query
+          schema:
+            type: string
+            enum: [24h, 7d, 30d]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+            maximum: 100
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [relevance, postedAt, salary]
+            default: relevance
+      responses:
+        '200':
+          description: List of matching jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobSearchResponse'
+
+    post:
+      summary: Create job posting
+      operationId: createJob
+      tags: [Jobs]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateJobRequest'
+      responses:
+        '201':
+          description: Job created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '403':
+          description: Not an employer
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /jobs/{id}:
+    get:
+      summary: Get job details
+      operationId: getJob
+      tags: [Jobs]
+      security: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobDetailResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    put:
+      summary: Update job posting
+      operationId: updateJob
+      tags: [Jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateJobRequest'
+      responses:
+        '200':
+          description: Job updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+        '403':
+          description: Not owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '404':
+          description: Job not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+    delete:
+      summary: Delete job posting
+      operationId: deleteJob
+      tags: [Jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '204':
+          description: Job deleted
+        '403':
+          description: Not owner
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /jobs/{id}/publish:
+    post:
+      summary: Publish draft job
+      operationId: publishJob
+      tags: [Jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Job published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+
+  /jobs/{id}/pause:
+    post:
+      summary: Pause active job
+      operationId: pauseJob
+      tags: [Jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        '200':
+          description: Job paused
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+
+  /jobs/{id}/close:
+    post:
+      summary: Close job posting
+      operationId: closeJob
+      tags: [Jobs]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [reason]
+              properties:
+                reason:
+                  type: string
+                  enum: [FILLED, CANCELLED, EXPIRED]
+      responses:
+        '200':
+          description: Job closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobResponse'
+
+  /jobs/{id}/apply:
+    post:
+      summary: Apply to job
+      operationId: applyToJob
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ApplyRequest'
+      responses:
+        '201':
+          description: Application submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationResponse'
+        '400':
+          description: Already applied or job closed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /jobs/{id}/applications:
+    get:
+      summary: Get applications for job (employer only)
+      operationId: getJobApplications
+      tags: [Applications]
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [APPLIED, UNDER_REVIEW, INTERVIEWED, OFFERED, REJECTED, WITHDRAWN]
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [appliedAt, matchScore]
+            default: matchScore
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of applications
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApplicationListResponse'
+
+  /employer/jobs:
+    get:
+      summary: Get employer's job postings
+      operationId: getEmployerJobs
+      tags: [Employer]
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [DRAFT, ACTIVE, PAUSED, CLOSED]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 0
+        - name: size
+          in: query
+          schema:
+            type: integer
+            default: 20
+      responses:
+        '200':
+          description: List of employer's jobs
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JobListResponse'
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    CreateJobRequest:
+      type: object
+      required: [title, description, remoteOption, experienceLevel, employmentType, skills]
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        remoteOption:
+          type: string
+          enum: [REMOTE, HYBRID, ONSITE]
+        salaryMin:
+          type: number
+        salaryMax:
+          type: number
+        salaryCurrency:
+          type: string
+          default: USD
+        salaryVisible:
+          type: boolean
+          default: true
+        experienceLevel:
+          type: string
+          enum: [ENTRY, MID, SENIOR, LEAD, EXECUTIVE]
+        employmentType:
+          type: string
+          enum: [FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE]
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobSkillInput'
+        deadline:
+          type: string
+          format: date
+
+    UpdateJobRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 255
+        description:
+          type: string
+        location:
+          $ref: '#/components/schemas/Location'
+        remoteOption:
+          type: string
+          enum: [REMOTE, HYBRID, ONSITE]
+        salaryMin:
+          type: number
+        salaryMax:
+          type: number
+        salaryVisible:
+          type: boolean
+        experienceLevel:
+          type: string
+          enum: [ENTRY, MID, SENIOR, LEAD, EXECUTIVE]
+        employmentType:
+          type: string
+          enum: [FULL_TIME, PART_TIME, CONTRACT, INTERNSHIP, FREELANCE]
+        skills:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobSkillInput'
+        deadline:
+          type: string
+          format: date
+
+    JobSkillInput:
+      type: object
+      required: [skillName, importance]
+      properties:
+        skillName:
+          type: string
+        importance:
+          type: string
+          enum: [MUST_HAVE, NICE_TO_HAVE]
+
+    JobResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        company:
+          $ref: '#/components/schemas/CompanySummary'
+        location:
+          $ref: '#/components/schemas/Location'
+        remoteOption:
+          type: string
+        salaryRange:
+          type: string
+        experienceLevel:
+          type: string
+        employmentType:
+          type: string
+        status:
+          type: string
+        postedAt:
+          type: string
+          format: date-time
+        deadline:
+          type: string
+          format: date
+
+    JobDetailResponse:
+      allOf:
+        - $ref: '#/components/schemas/JobResponse'
+        - type: object
+          properties:
+            description:
+              type: string
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/JobSkill'
+            applicationStatus:
+              type: string
+              description: Current user's application status (if applied)
+            matchScore:
+              type: integer
+              description: AI match score for current user (if job seeker)
+
+    JobSearchResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/JobResponse'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    JobListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/JobResponse'
+              - type: object
+                properties:
+                  applicationCount:
+                    type: integer
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    ApplyRequest:
+      type: object
+      properties:
+        resumeId:
+          type: string
+          format: uuid
+        coverLetter:
+          type: string
+
+    ApplicationResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        jobId:
+          type: string
+          format: uuid
+        status:
+          type: string
+        matchScore:
+          type: integer
+        appliedAt:
+          type: string
+          format: date-time
+
+    ApplicationListResponse:
+      type: object
+      properties:
+        content:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApplicationDetail'
+        page:
+          type: integer
+        size:
+          type: integer
+        totalElements:
+          type: integer
+        totalPages:
+          type: integer
+
+    ApplicationDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        candidate:
+          $ref: '#/components/schemas/CandidateSummary'
+        status:
+          type: string
+        matchScore:
+          type: integer
+        matchBreakdown:
+          $ref: '#/components/schemas/MatchBreakdown'
+        appliedAt:
+          type: string
+          format: date-time
+
+    CandidateSummary:
+      type: object
+      properties:
+        profileId:
+          type: string
+          format: uuid
+        name:
+          type: string
+        headline:
+          type: string
+        location:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+
+    MatchBreakdown:
+      type: object
+      properties:
+        skillsScore:
+          type: integer
+        experienceScore:
+          type: integer
+        locationScore:
+          type: integer
+        salaryScore:
+          type: integer
+        matchedSkills:
+          type: array
+          items:
+            type: string
+        missingMustHave:
+          type: array
+          items:
+            type: string
+        explanation:
+          type: string
+
+    CompanySummary:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        logoUrl:
+          type: string
+        industry:
+          type: string
+        verified:
+          type: boolean
+
+    JobSkill:
+      type: object
+      properties:
+        name:
+          type: string
+        importance:
+          type: string
+
+    Location:
+      type: object
+      properties:
+        city:
+          type: string
+        state:
+          type: string
+        country:
+          type: string
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        message:
+          type: string
+        details:
+          type: array
+          items:
+            type: string
