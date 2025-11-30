@@ -1,0 +1,86 @@
+# Local Development Profile
+# Usage: Run with --spring.profiles.active=local
+# Prerequisites: docker-compose up -d
+
+spring:
+  # Database - Local Docker
+  datasource:
+    url: jdbc:postgresql://localhost:5432/job_matching
+    username: postgres
+    password: postgres
+
+  # JPA - Show SQL for debugging
+  jpa:
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+
+  # Redis - Local Docker
+  data:
+    redis:
+      host: localhost
+      port: 6379
+    elasticsearch:
+      client:
+        uris: http://localhost:9200
+
+  # Spring AI - Mistral (set your API key)
+  ai:
+    mistralai:
+      api-key: ${MISTRAL_API_KEY:your-api-key-here}
+      chat:
+        options:
+          model: mistral-large-latest
+          temperature: 0.7
+      embedding:
+        options:
+          model: mistral-embed
+
+  # Security - Disable for local dev (optional)
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+
+# S3/MinIO - Local Docker
+s3:
+  endpoint: http://localhost:9000
+  access-key: minioadmin
+  secret-key: minioadmin
+  bucket:
+    resumes: resumes
+  region: us-east-1
+
+# JWT Settings
+app:
+  jwt:
+    secret: local-development-secret-key-not-for-production
+    access-token-expiration: 3600000  # 1 hour for local dev
+    refresh-token-expiration: 604800000  # 7 days
+  cors:
+    allowed-origins: http://localhost:3000,http://localhost:5173
+
+# Logging - More verbose for local
+logging:
+  level:
+    root: INFO
+    com.isaac.job_matching: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# Server
+server:
+  port: 8080
+
+# Actuator - Full access for local
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      show-details: always

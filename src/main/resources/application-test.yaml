@@ -1,0 +1,91 @@
+# Test Profile
+# Usage: Automatically used by @SpringBootTest with @ActiveProfiles("test")
+# Uses Testcontainers for database and services
+
+spring:
+  # Database - Testcontainers PostgreSQL
+  datasource:
+    url: jdbc:tc:postgresql:16:///?TC_DAEMON=true
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+
+  # JPA - Create schema for tests
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+
+  # Flyway - Disable for tests (using ddl-auto)
+  flyway:
+    enabled: false
+
+  # Redis - Embedded or mock
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+  # Spring AI - Mock for tests
+  ai:
+    mistralai:
+      api-key: test-api-key
+      enabled: false
+
+  # Security - Simplified for tests
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8080
+
+# Spring Modulith - Disable async events in tests
+spring.modulith:
+  events:
+    externalization:
+      enabled: false
+
+# S3/MinIO - Mock for tests
+s3:
+  endpoint: http://localhost:9000
+  access-key: test-access-key
+  secret-key: test-secret-key
+  bucket:
+    resumes: test-resumes
+  region: us-east-1
+
+# JWT Settings
+app:
+  jwt:
+    secret: test-jwt-secret-key-for-unit-tests-only
+    access-token-expiration: 3600000
+    refresh-token-expiration: 86400000
+  cors:
+    allowed-origins: http://localhost:3000
+  matching:
+    weights:
+      skills: 0.40
+      experience: 0.25
+      location: 0.15
+      salary: 0.15
+      culture: 0.05
+
+# Logging - Minimal for tests
+logging:
+  level:
+    root: WARN
+    com.isaac.job_matching: INFO
+    org.springframework.test: WARN
+    org.testcontainers: WARN
+
+# Server - Random port for tests
+server:
+  port: 0
+
+# Actuator - Minimal for tests
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
