@@ -89,36 +89,36 @@ Based on plan.md structure (Spring Modulith):
 
 ### User Module (US1)
 
-- [ ] T025 [P] [US1] Create UserRole sealed interface with JOB_SEEKER, EMPLOYER, ADMIN in `src/main/java/com/isaac/job_matching/user/UserRole.java`
-- [ ] T026 [P] [US1] Create UserStatus enum (PENDING, ACTIVE, SUSPENDED) in `src/main/java/com/isaac/job_matching/user/UserStatus.java`
-- [ ] T027 [US1] Create User entity (aggregate root) in `src/main/java/com/isaac/job_matching/user/User.java`
-- [ ] T028 [US1] Create UserRepository in `src/main/java/com/isaac/job_matching/user/UserRepository.java`
-- [ ] T029 [US1] Create UserRegisteredEvent (record) in `src/main/java/com/isaac/job_matching/user/UserRegisteredEvent.java`
-- [ ] T030 [US1] Create UserService public API in `src/main/java/com/isaac/job_matching/user/UserService.java`
-- [ ] T031 [P] [US1] Create UserValidationService in `src/main/java/com/isaac/job_matching/user/internal/UserValidationService.java`
-- [ ] T032 [P] [US1] Create PasswordEncodingService in `src/main/java/com/isaac/job_matching/user/internal/PasswordEncodingService.java`
+- [X] T025 [P] [US1] Create UserRole sealed interface with JOB_SEEKER, EMPLOYER, ADMIN in `src/main/java/com/isaac/job_matching/user/UserRole.java`
+- [X] T026 [P] [US1] Create UserStatus enum (PENDING, ACTIVE, SUSPENDED) in `src/main/java/com/isaac/job_matching/user/UserStatus.java`
+- [X] T027 [US1] Create User entity (aggregate root) in `src/main/java/com/isaac/job_matching/user/User.java`
+- [X] T028 [US1] Create UserRepository in `src/main/java/com/isaac/job_matching/user/UserRepository.java`
+- [X] T029 [US1] Create UserRegisteredEvent (record) in `src/main/java/com/isaac/job_matching/user/UserRegisteredEvent.java`
+- [X] T030 [US1] Create UserService public API in `src/main/java/com/isaac/job_matching/user/UserService.java`
+- [X] T031 [P] [US1] Create UserValidationService in `src/main/java/com/isaac/job_matching/user/internal/UserValidationService.java`
+- [X] T032 [P] [US1] Create PasswordEncodingService in `src/main/java/com/isaac/job_matching/user/internal/PasswordEncodingService.java`
 
 ### Auth Module (US1)
 
-- [ ] T033 [P] [US1] Create TokenPair record in `src/main/java/com/isaac/job_matching/auth/TokenPair.java`
-- [ ] T034 [P] [US1] Create AuthenticatedUser record in `src/main/java/com/isaac/job_matching/auth/AuthenticatedUser.java`
-- [ ] T035 [US1] Create AuthService public API in `src/main/java/com/isaac/job_matching/auth/AuthService.java`
-- [ ] T036 [US1] Create JwtTokenService in `src/main/java/com/isaac/job_matching/auth/internal/JwtTokenService.java`
-- [ ] T037 [US1] Create RefreshTokenRepository in `src/main/java/com/isaac/job_matching/auth/internal/RefreshTokenRepository.java`
-- [ ] T038 [US1] Create AuthController with register/login/refresh/verify endpoints in `src/main/java/com/isaac/job_matching/auth/internal/AuthController.java`
+- [X] T033 [P] [US1] Create TokenPair record in `src/main/java/com/isaac/job_matching/auth/TokenPair.java`
+- [X] T034 [P] [US1] Create AuthenticatedUser record in `src/main/java/com/isaac/job_matching/auth/AuthenticatedUser.java`
+- [X] T035 [US1] Create AuthService public API in `src/main/java/com/isaac/job_matching/auth/AuthService.java`
+- [X] T036 [US1] Create JwtTokenService in `src/main/java/com/isaac/job_matching/auth/internal/JwtTokenService.java`
+- [X] T037 [US1] Create RefreshTokenRepository in `src/main/java/com/isaac/job_matching/auth/internal/RefreshTokenRepository.java`
+- [X] T038 [US1] Create AuthController with register/login/refresh/verify endpoints in `src/main/java/com/isaac/job_matching/auth/internal/AuthController.java`
 
 ### Profile Module (US1)
 
-- [ ] T039 [P] [US1] Create V5__create_profiles.sql migration in `src/main/resources/db/migration/V5__create_profiles.sql`
-- [ ] T040 [US1] Create Profile entity (aggregate root) in `src/main/java/com/isaac/job_matching/profile/Profile.java`
-- [ ] T041 [P] [US1] Create WorkExperience entity in `src/main/java/com/isaac/job_matching/profile/WorkExperience.java`
-- [ ] T042 [P] [US1] Create Education entity in `src/main/java/com/isaac/job_matching/profile/Education.java`
-- [ ] T043 [P] [US1] Create ProfileSkill entity in `src/main/java/com/isaac/job_matching/profile/ProfileSkill.java`
-- [ ] T044 [US1] Create ProfileUpdatedEvent (record) in `src/main/java/com/isaac/job_matching/profile/ProfileUpdatedEvent.java`
-- [ ] T045 [US1] Create ProfileRepository in `src/main/java/com/isaac/job_matching/profile/internal/ProfileRepository.java`
-- [ ] T046 [US1] Create ProfileMapper in `src/main/java/com/isaac/job_matching/profile/internal/ProfileMapper.java`
-- [ ] T047 [US1] Create ProfileService public API in `src/main/java/com/isaac/job_matching/profile/ProfileService.java`
-- [ ] T048 [US1] Create ProfileController with CRUD endpoints in `src/main/java/com/isaac/job_matching/profile/internal/ProfileController.java`
+- [X] T039 [P] [US1] Create V5__create_profiles.sql migration in `src/main/resources/db/migration/V5__create_profiles.sql`
+- [X] T040 [US1] Create Profile entity (aggregate root) in `src/main/java/com/isaac/job_matching/profile/Profile.java`
+- [X] T041 [P] [US1] Create WorkExperience entity in `src/main/java/com/isaac/job_matching/profile/WorkExperience.java`
+- [X] T042 [P] [US1] Create Education entity in `src/main/java/com/isaac/job_matching/profile/Education.java`
+- [X] T043 [P] [US1] Create ProfileSkill entity in `src/main/java/com/isaac/job_matching/profile/ProfileSkill.java`
+- [X] T044 [US1] Create ProfileUpdatedEvent (record) in `src/main/java/com/isaac/job_matching/profile/ProfileUpdatedEvent.java`
+- [X] T045 [US1] Create ProfileRepository in `src/main/java/com/isaac/job_matching/profile/internal/ProfileRepository.java`
+- [X] T046 [US1] Create ProfileMapper in `src/main/java/com/isaac/job_matching/profile/internal/ProfileMapper.java`
+- [X] T047 [US1] Create ProfileService public API in `src/main/java/com/isaac/job_matching/profile/ProfileService.java`
+- [X] T048 [US1] Create ProfileController with CRUD endpoints in `src/main/java/com/isaac/job_matching/profile/internal/ProfileController.java`
 
 **Checkpoint**: User Story 1 complete - job seekers can register and create profiles
 
