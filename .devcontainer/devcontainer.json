@@ -1,5 +1,5 @@
 {
-  "name": "Job Matching Platform - GraalVM 25",
+  "name": "Job Matching Platform - Java 25",
   "build": {
     "dockerfile": "Dockerfile"
   },
@@ -19,11 +19,11 @@
         "ms-azuretools.vscode-docker"
       ],
       "settings": {
-        "java.jdt.ls.java.home": "/opt/graalvm",
+        "java.jdt.ls.java.home": "/opt/java",
         "java.configuration.runtimes": [
           {
             "name": "JavaSE-25",
-            "path": "/opt/graalvm",
+            "path": "/opt/java",
             "default": true
           }
         ]
@@ -34,8 +34,7 @@
   "forwardPorts": [8080, 5432],
 
   "remoteEnv": {
-    "JAVA_HOME": "/opt/graalvm",
-    "GRAALVM_HOME": "/opt/graalvm",
-    "PATH": "/opt/graalvm/bin:${containerEnv:PATH}"
+    "JAVA_HOME": "/opt/java",
+    "PATH": "/opt/java/bin:${containerEnv:PATH}"
   }
 }
