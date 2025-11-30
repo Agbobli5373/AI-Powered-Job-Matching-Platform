@@ -178,6 +178,30 @@ public class GlobalExceptionHandler {
         }
 
         /**
+         * Handles forbidden exceptions.
+         * 
+         * @param ex      the exception
+         * @param request the web request
+         * @return 403 Forbidden response
+         */
+        @ExceptionHandler(ForbiddenException.class)
+        public ResponseEntity<ApiError> handleForbidden(
+                        ForbiddenException ex, WebRequest request) {
+
+                log.warn("Forbidden: {}", ex.getMessage());
+
+                ApiError error = new ApiError(
+                                HttpStatus.FORBIDDEN.value(),
+                                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                                ex.getMessage(),
+                                getPath(request),
+                                Instant.now(),
+                                null);
+
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+        }
+
+        /**
          * Handles access denied exceptions.
          * 
          * @param ex      the exception

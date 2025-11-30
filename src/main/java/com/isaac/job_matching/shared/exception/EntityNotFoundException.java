@@ -17,6 +17,12 @@ public class EntityNotFoundException extends RuntimeException {
         this.identifier = identifier;
     }
 
+    public EntityNotFoundException(String entityType, String field, String value) {
+        super(entityType + " not found with " + field + ": " + value);
+        this.entityType = entityType;
+        this.identifier = field + "=" + value;
+    }
+
     public EntityNotFoundException(String message) {
         super(message);
         this.entityType = null;
