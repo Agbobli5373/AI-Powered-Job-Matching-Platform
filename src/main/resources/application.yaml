@@ -117,4 +117,21 @@ logging:
 server:
   port: ${SERVER_PORT:8080}
   servlet:
-    context-path: /api
+    context-path: /
+
+# OpenAPI/Swagger Configuration
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+    operations-sorter: method
+    tags-sorter: alpha
+    display-request-duration: true
+    filter: true
+    show-extensions: true
+  show-actuator: false
+  packages-to-scan: com.isaac.job_matching
+  paths-to-match: /api/**

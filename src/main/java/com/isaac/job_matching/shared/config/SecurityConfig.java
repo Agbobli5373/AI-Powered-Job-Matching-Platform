@@ -59,8 +59,10 @@ public class SecurityConfig {
                         .requestMatchers("/actuator/info").permitAll()
                         .requestMatchers("/actuator/**").hasRole("ADMIN")
 
-                        // API documentation
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                        // API documentation - OpenAPI/Swagger
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/v3/api-docs.yaml").permitAll()
+                        .requestMatchers("/swagger-resources/**", "/webjars/**").permitAll()
 
                         // Job search is public (read-only)
                         .requestMatchers(HttpMethod.GET, "/api/jobs/**").permitAll()

@@ -46,36 +46,36 @@ Based on plan.md structure (Spring Modulith):
 
 ### Shared Module
 
-- [ ] T007 Create shared module package-info.java with @ApplicationModule(type = OPEN) in `src/main/java/com/isaac/job_matching/shared/package-info.java`
-- [ ] T008 [P] Create BaseEntity with UUID and timestamps in `src/main/java/com/isaac/job_matching/shared/BaseEntity.java`
-- [ ] T009 [P] Create Money value object (record) in `src/main/java/com/isaac/job_matching/shared/Money.java`
-- [ ] T010 [P] Create Location value object (record) in `src/main/java/com/isaac/job_matching/shared/Location.java`
-- [ ] T011 [P] Create DateRange value object (record) in `src/main/java/com/isaac/job_matching/shared/DateRange.java`
-- [ ] T012 Create Skill entity with embedding vector in `src/main/java/com/isaac/job_matching/shared/Skill.java`
-- [ ] T013 Create SkillRepository in `src/main/java/com/isaac/job_matching/shared/SkillRepository.java`
+- [X] T007 Create shared module package-info.java with @ApplicationModule(type = OPEN) in `src/main/java/com/isaac/job_matching/shared/package-info.java`
+- [X] T008 [P] Create BaseEntity with UUID and timestamps in `src/main/java/com/isaac/job_matching/shared/BaseEntity.java`
+- [X] T009 [P] Create Money value object (record) in `src/main/java/com/isaac/job_matching/shared/Money.java`
+- [X] T010 [P] Create Location value object (record) in `src/main/java/com/isaac/job_matching/shared/Location.java`
+- [X] T011 [P] Create DateRange value object (record) in `src/main/java/com/isaac/job_matching/shared/DateRange.java`
+- [X] T012 Create Skill entity with embedding vector in `src/main/java/com/isaac/job_matching/shared/Skill.java`
+- [X] T013 Create SkillRepository in `src/main/java/com/isaac/job_matching/shared/SkillRepository.java`
 
 ### Database Migrations (Foundation)
 
-- [ ] T014 Create V1__enable_extensions.sql (pgvector, uuid-ossp) in `src/main/resources/db/migration/V1__enable_extensions.sql`
-- [ ] T015 Create V2__create_skills.sql with vector column in `src/main/resources/db/migration/V2__create_skills.sql`
-- [ ] T016 Create V3__create_users.sql in `src/main/resources/db/migration/V3__create_users.sql`
-- [ ] T017 Create V4__create_event_publication.sql for Spring Modulith in `src/main/resources/db/migration/V4__create_event_publication.sql`
+- [X] T014 Create V1__enable_extensions.sql (pgvector, uuid-ossp) in `src/main/resources/db/migration/V1__enable_extensions.sql`
+- [X] T015 Create V2__create_skills.sql with vector column in `src/main/resources/db/migration/V2__create_skills.sql`
+- [X] T016 Create V3__create_users.sql in `src/main/resources/db/migration/V3__create_users.sql`
+- [X] T017 Create V4__create_event_publication.sql for Spring Modulith in `src/main/resources/db/migration/V4__create_event_publication.sql`
 
 ### Security Configuration
 
-- [ ] T018 Create SecurityConfig with JWT resource server in `src/main/java/com/isaac/job_matching/shared/config/SecurityConfig.java`
-- [ ] T019 [P] Create JwtConfig for token settings in `src/main/java/com/isaac/job_matching/shared/config/JwtConfig.java`
-- [ ] T020 [P] Create CorsConfig for CORS settings in `src/main/java/com/isaac/job_matching/shared/config/CorsConfig.java`
+- [X] T018 Create SecurityConfig with JWT resource server in `src/main/java/com/isaac/job_matching/shared/config/SecurityConfig.java`
+- [X] T019 [P] Create JwtConfig for token settings in `src/main/java/com/isaac/job_matching/shared/config/JwtConfig.java`
+- [X] T020 [P] Create CorsConfig for CORS settings in `src/main/java/com/isaac/job_matching/shared/config/CorsConfig.java`
 
 ### Exception Handling
 
-- [ ] T021 Create GlobalExceptionHandler with @ControllerAdvice in `src/main/java/com/isaac/job_matching/shared/exception/GlobalExceptionHandler.java`
-- [ ] T022 [P] Create ApiError record for error responses in `src/main/java/com/isaac/job_matching/shared/exception/ApiError.java`
-- [ ] T023 [P] Create domain exception classes (EntityNotFoundException, ValidationException) in `src/main/java/com/isaac/job_matching/shared/exception/`
+- [X] T021 Create GlobalExceptionHandler with @ControllerAdvice in `src/main/java/com/isaac/job_matching/shared/exception/GlobalExceptionHandler.java`
+- [X] T022 [P] Create ApiError record for error responses in `src/main/java/com/isaac/job_matching/shared/exception/ApiError.java`
+- [X] T023 [P] Create domain exception classes (EntityNotFoundException, ValidationException) in `src/main/java/com/isaac/job_matching/shared/exception/`
 
 ### Module Structure Verification
 
-- [ ] T024 Create ModuleStructureTests to verify module boundaries in `src/test/java/com/isaac/job_matching/ModuleStructureTests.java`
+- [X] T024 Create ModuleStructureTests to verify module boundaries in `src/test/java/com/isaac/job_matching/ModuleStructureTests.java`
 
 **Checkpoint**: Foundation ready - user story implementation can now begin
 
@@ -392,7 +392,7 @@ Based on plan.md structure (Spring Modulith):
 
 ### Documentation
 
-- [ ] T156 [P] Configure OpenAPI/Swagger documentation in `src/main/java/com/isaac/job_matching/shared/config/OpenApiConfig.java`
+- [X] T156 [P] Configure OpenAPI/Swagger documentation in `src/main/java/com/isaac/job_matching/shared/config/OpenApiConfig.java`
 - [ ] T157 Validate implementation against quickstart.md scenarios
 
 ---
