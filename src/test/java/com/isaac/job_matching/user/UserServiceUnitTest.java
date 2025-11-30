@@ -417,9 +417,6 @@ class UserServiceUnitTest {
             // Given
             UUID userId = UUID.randomUUID();
             String weakPassword = "weak";
-            User user = new User("test@example.com", "old_hash", UserRole.fromString("JOB_SEEKER"));
-
-            when(userRepository.findById(userId)).thenReturn(Optional.of(user));
 
             ValidationException validationException = new ValidationException("password", "Password must be at least 8 characters");
             org.mockito.Mockito.doThrow(validationException).when(validationService).validatePassword(weakPassword);

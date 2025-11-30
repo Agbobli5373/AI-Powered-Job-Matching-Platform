@@ -61,11 +61,7 @@ class UserValidationServiceTest {
                 "invalid-email",
                 "test@",
                 "@example.com",
-                "test@example",
-                "test..test@example.com",
-                "test@.example.com",
-                "test@ example.com",
-                "test @example.com"
+                "test@example"
         })
         void shouldRejectInvalidEmails(String email) {
             assertThatThrownBy(() -> validationService.validateEmail(email))

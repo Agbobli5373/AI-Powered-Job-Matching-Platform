@@ -7,6 +7,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.lang.reflect.Field;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -60,6 +61,35 @@ class ProfileServiceUnitTest {
     @BeforeEach
     void setUp() {
         profileService = new ProfileService(profileRepository, skillRepository, eventPublisher);
+    }
+
+    // ==================== Test Utilities ====================
+
+    /**
+     * Sets the ID field on an entity using reflection.
+     * Used for testing without persisting to database.
+     */
+    private void setEntityId(Object entity, UUID id) {
+        try {
+            Class<?> clazz = entity.getClass();
+            Field idField = null;
+            
+            // Search for 'id' field in entity class and superclasses
+            while (clazz != null && idField == null) {
+                try {
+                    idField = clazz.getDeclaredField("id");
+                } catch (NoSuchFieldException e) {
+                    clazz = clazz.getSuperclass();
+                }
+            }
+            
+            if (idField != null) {
+                idField.setAccessible(true);
+                idField.set(entity, id);
+            }
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set entity ID", e);
+        }
     }
 
     // ==================== Profile Creation Tests ====================
@@ -297,10 +327,11 @@ class ProfileServiceUnitTest {
             // Given
             UUID profileId = UUID.randomUUID();
             UUID userId = UUID.randomUUID();
+            UUID experienceId = UUID.randomUUID();
             Profile profile = new Profile(userId);
             WorkExperience existingExperience = new WorkExperience("Old Company", "Developer", LocalDate.now().minusYears(2));
+            setEntityId(existingExperience, experienceId);
             profile.addWorkExperience(existingExperience);
-            UUID experienceId = existingExperience.getId();
 
             WorkExperience updatedExperience = new WorkExperience("New Company", "Senior Developer", LocalDate.now().minusYears(1));
             updatedExperience.setDescription("Updated description");
@@ -342,10 +373,11 @@ class ProfileServiceUnitTest {
             // Given
             UUID profileId = UUID.randomUUID();
             UUID userId = UUID.randomUUID();
+            UUID experienceId = UUID.randomUUID();
             Profile profile = new Profile(userId);
             WorkExperience experience = new WorkExperience("Company", "Developer", LocalDate.now().minusYears(1));
+            setEntityId(experience, experienceId);
             profile.addWorkExperience(experience);
-            UUID experienceId = experience.getId();
 
             when(profileRepository.findByIdWithAllAssociations(profileId)).thenReturn(Optional.of(profile));
             when(profileRepository.save(any(Profile.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -408,10 +440,11 @@ class ProfileServiceUnitTest {
             // Given
             UUID profileId = UUID.randomUUID();
             UUID userId = UUID.randomUUID();
+            UUID educationId = UUID.randomUUID();
             Profile profile = new Profile(userId);
             Education existingEducation = new Education("Old University", "BA", "History", 2019);
+            setEntityId(existingEducation, educationId);
             profile.addEducation(existingEducation);
-            UUID educationId = existingEducation.getId();
 
             Education updatedEducation = new Education("New University", "MS", "Computer Science", 2022);
 
@@ -453,10 +486,11 @@ class ProfileServiceUnitTest {
             // Given
             UUID profileId = UUID.randomUUID();
             UUID userId = UUID.randomUUID();
+            UUID educationId = UUID.randomUUID();
             Profile profile = new Profile(userId);
             Education education = new Education("University", "BS", "CS", 2020);
+            setEntityId(education, educationId);
             profile.addEducation(education);
-            UUID educationId = education.getId();
 
             when(profileRepository.findByIdWithAllAssociations(profileId)).thenReturn(Optional.of(profile));
             when(profileRepository.save(any(Profile.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -610,15 +644,8 @@ class ProfileServiceUnitTest {
         }
 
         private Skill createSkill(UUID id, String name, String category) {
-            // Using reflection to set the ID since Skill extends BaseEntity
             Skill skill = new Skill(name, category);
-            try {
-                java.lang.reflect.Field idField = skill.getClass().getSuperclass().getDeclaredField("id");
-                idField.setAccessible(true);
-                idField.set(skill, id);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to set skill ID", e);
-            }
+            setEntityId(skill, id);
             return skill;
         }
     }
