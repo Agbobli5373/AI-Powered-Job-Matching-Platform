@@ -1,0 +1,52 @@
+# Git
+.git/
+.gitignore
+
+# Maven
+target/
+*.jar
+!src/main/**/target/
+!src/test/**/target/
+
+# IDE
+.idea/
+*.iws
+*.iml
+*.ipr
+.vscode/
+.settings/
+.classpath
+.project
+.factorypath
+
+# Logs
+*.log
+logs/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Docker
+docker-compose.yml
+docker-compose.override.yml
+Dockerfile*
+.dockerignore
+
+# Specifications
+specs/
+
+# Testing
+coverage/
+test-output/
+
+# OS
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+
+# Build artifacts
+build/
+out/
