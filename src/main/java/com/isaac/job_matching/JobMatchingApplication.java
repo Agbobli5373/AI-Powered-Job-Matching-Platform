@@ -1,5 +1,8 @@
 package com.isaac.job_matching;
 
+import org.springframework.ai.model.mistralai.autoconfigure.MistralAiChatAutoConfiguration;
+import org.springframework.ai.model.mistralai.autoconfigure.MistralAiEmbeddingAutoConfiguration;
+import org.springframework.ai.model.mistralai.autoconfigure.MistralAiModerationAutoConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.modulith.Modulithic;
@@ -15,7 +18,11 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * - Resume parsing and skill extraction
  * - Application tracking and messaging
  */
-@SpringBootApplication
+@SpringBootApplication(exclude = {
+		MistralAiChatAutoConfiguration.class,
+		MistralAiEmbeddingAutoConfiguration.class,
+		MistralAiModerationAutoConfiguration.class
+})
 @Modulithic(systemName = "Job Matching Platform", sharedModules = "shared")
 @EnableAsync
 public class JobMatchingApplication {
