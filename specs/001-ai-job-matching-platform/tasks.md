@@ -141,16 +141,16 @@ Based on plan.md structure (Spring Modulith):
 
 ### Job Module (US2)
 
-- [ ] T055 [P] [US2] Create V7__create_jobs.sql migration in `src/main/resources/db/migration/V7__create_jobs.sql`
-- [ ] T056 [P] [US2] Create JobStatus sealed interface (DRAFT, ACTIVE, PAUSED, CLOSED) in `src/main/java/com/isaac/job_matching/job/JobStatus.java`
-- [ ] T057 [US2] Create Job entity (aggregate root) in `src/main/java/com/isaac/job_matching/job/Job.java`
-- [ ] T058 [P] [US2] Create JobSkill entity with importance level in `src/main/java/com/isaac/job_matching/job/JobSkill.java`
-- [ ] T059 [US2] Create JobRepository in `src/main/java/com/isaac/job_matching/job/JobRepository.java`
-- [ ] T060 [P] [US2] Create JobPostedEvent (record) in `src/main/java/com/isaac/job_matching/job/JobPostedEvent.java`
-- [ ] T061 [P] [US2] Create JobClosedEvent (record) in `src/main/java/com/isaac/job_matching/job/JobClosedEvent.java`
-- [ ] T062 [US2] Create JobValidationService in `src/main/java/com/isaac/job_matching/job/internal/JobValidationService.java`
-- [ ] T063 [US2] Create JobService public API in `src/main/java/com/isaac/job_matching/job/JobService.java`
-- [ ] T064 [US2] Create JobController with CRUD endpoints in `src/main/java/com/isaac/job_matching/job/internal/JobController.java`
+- [X] T055 [P] [US2] Create V7__create_jobs.sql migration in `src/main/resources/db/migration/V7__create_jobs.sql`
+- [X] T056 [P] [US2] Create JobStatus sealed interface (DRAFT, ACTIVE, PAUSED, CLOSED) in `src/main/java/com/isaac/job_matching/job/JobStatus.java`
+- [X] T057 [US2] Create Job entity (aggregate root) in `src/main/java/com/isaac/job_matching/job/Job.java`
+- [X] T058 [P] [US2] Create JobSkill entity with importance level in `src/main/java/com/isaac/job_matching/job/JobSkill.java`
+- [X] T059 [US2] Create JobRepository in `src/main/java/com/isaac/job_matching/job/JobRepository.java`
+- [X] T060 [P] [US2] Create JobPostedEvent (record) in `src/main/java/com/isaac/job_matching/job/JobPostedEvent.java`
+- [X] T061 [P] [US2] Create JobClosedEvent (record) in `src/main/java/com/isaac/job_matching/job/JobClosedEvent.java`
+- [X] T062 [US2] Create JobValidationService in `src/main/java/com/isaac/job_matching/job/internal/JobValidationService.java`
+- [X] T063 [US2] Create JobService public API in `src/main/java/com/isaac/job_matching/job/JobService.java`
+- [X] T064 [US2] Create JobController with CRUD endpoints in `src/main/java/com/isaac/job_matching/job/internal/JobController.java`
 
 **Checkpoint**: User Story 2 complete - employers can post jobs
 
