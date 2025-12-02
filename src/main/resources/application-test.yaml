@@ -21,11 +21,11 @@ spring:
   flyway:
     enabled: false
 
-  # Redis - Embedded or mock
-  data:
-    redis:
-      host: localhost
-      port: 6379
+  # Elasticsearch - Disabled for tests
+  elasticsearch:
+    enabled: false
+    client:
+      enabled: false
 
   # Spring AI - Mock for tests
   ai:

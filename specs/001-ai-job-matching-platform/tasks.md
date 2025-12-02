@@ -164,25 +164,25 @@ Based on plan.md structure (Spring Modulith):
 
 ### Search Module (US3)
 
-- [ ] T065 [P] [US3] Create JobSearchCriteria record in `src/main/java/com/isaac/job_matching/search/JobSearchCriteria.java`
-- [ ] T066 [P] [US3] Create SearchResult record in `src/main/java/com/isaac/job_matching/search/SearchResult.java`
-- [ ] T067 [US3] Create ElasticsearchJobRepository in `src/main/java/com/isaac/job_matching/search/internal/ElasticsearchJobRepository.java`
-- [ ] T068 [US3] Create JobSearchDocument for ES indexing in `src/main/java/com/isaac/job_matching/search/internal/JobSearchDocument.java`
-- [ ] T069 [US3] Create SearchIndexer @ApplicationModuleListener for JobPostedEvent in `src/main/java/com/isaac/job_matching/search/internal/SearchIndexer.java`
-- [ ] T070 [US3] Create SearchService public API in `src/main/java/com/isaac/job_matching/search/SearchService.java`
-- [ ] T071 [US3] Create SearchController with search endpoint in `src/main/java/com/isaac/job_matching/search/internal/SearchController.java`
+- [X] T065 [P] [US3] Create JobSearchCriteria record in `src/main/java/com/isaac/job_matching/search/JobSearchCriteria.java`
+- [X] T066 [P] [US3] Create SearchResult record in `src/main/java/com/isaac/job_matching/search/SearchResult.java`
+- [X] T067 [US3] Create ElasticsearchJobRepository in `src/main/java/com/isaac/job_matching/search/internal/ElasticsearchJobRepository.java`
+- [X] T068 [US3] Create JobSearchDocument for ES indexing in `src/main/java/com/isaac/job_matching/search/internal/JobSearchDocument.java`
+- [X] T069 [US3] Create SearchIndexer @ApplicationModuleListener for JobPostedEvent in `src/main/java/com/isaac/job_matching/search/internal/SearchIndexer.java`
+- [X] T070 [US3] Create SearchService public API in `src/main/java/com/isaac/job_matching/search/SearchService.java`
+- [X] T071 [US3] Create SearchController with search endpoint in `src/main/java/com/isaac/job_matching/search/internal/SearchController.java`
 
 ### Application Module (US3)
 
-- [ ] T072 [P] [US3] Create V8__create_applications.sql migration in `src/main/resources/db/migration/V8__create_applications.sql`
-- [ ] T073 [P] [US3] Create ApplicationStatus sealed interface in `src/main/java/com/isaac/job_matching/application/ApplicationStatus.java`
-- [ ] T074 [US3] Create JobApplication entity (aggregate root) in `src/main/java/com/isaac/job_matching/application/JobApplication.java`
-- [ ] T075 [US3] Create ApplicationRepository in `src/main/java/com/isaac/job_matching/application/internal/ApplicationRepository.java`
-- [ ] T076 [P] [US3] Create ApplicationSubmittedEvent (record) in `src/main/java/com/isaac/job_matching/application/ApplicationSubmittedEvent.java`
-- [ ] T077 [P] [US3] Create ApplicationStatusChangedEvent (record) in `src/main/java/com/isaac/job_matching/application/ApplicationStatusChangedEvent.java`
-- [ ] T078 [US3] Create ApplicationWorkflow for status transitions in `src/main/java/com/isaac/job_matching/application/internal/ApplicationWorkflow.java`
-- [ ] T079 [US3] Create ApplicationService public API in `src/main/java/com/isaac/job_matching/application/ApplicationService.java`
-- [ ] T080 [US3] Create ApplicationController with apply/view endpoints in `src/main/java/com/isaac/job_matching/application/internal/ApplicationController.java`
+- [X] T072 [P] [US3] Create V8__create_applications.sql migration in `src/main/resources/db/migration/V8__create_applications.sql`
+- [X] T073 [P] [US3] Create ApplicationStatus sealed interface in `src/main/java/com/isaac/job_matching/application/ApplicationStatus.java`
+- [X] T074 [US3] Create JobApplication entity (aggregate root) in `src/main/java/com/isaac/job_matching/application/JobApplication.java`
+- [X] T075 [US3] Create ApplicationRepository in `src/main/java/com/isaac/job_matching/application/internal/ApplicationRepository.java`
+- [X] T076 [P] [US3] Create ApplicationSubmittedEvent (record) in `src/main/java/com/isaac/job_matching/application/ApplicationSubmittedEvent.java`
+- [X] T077 [P] [US3] Create ApplicationStatusChangedEvent (record) in `src/main/java/com/isaac/job_matching/application/ApplicationStatusChangedEvent.java`
+- [X] T078 [US3] Create ApplicationWorkflow for status transitions in `src/main/java/com/isaac/job_matching/application/internal/ApplicationWorkflow.java`
+- [X] T079 [US3] Create ApplicationService public API in `src/main/java/com/isaac/job_matching/application/ApplicationService.java`
+- [X] T080 [US3] Create ApplicationController with apply/view endpoints in `src/main/java/com/isaac/job_matching/application/internal/ApplicationController.java`
 
 **Checkpoint**: MVP Complete - job seekers can register, search jobs, and apply
 
