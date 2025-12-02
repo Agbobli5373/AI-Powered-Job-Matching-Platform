@@ -22,8 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.isaac.job_matching.company.CompanyService;
 import com.isaac.job_matching.company.Company;
+import com.isaac.job_matching.company.CompanyService;
 import com.isaac.job_matching.job.EmploymentType;
 import com.isaac.job_matching.job.ExperienceLevel;
 import com.isaac.job_matching.job.Job;
@@ -40,7 +40,6 @@ import com.isaac.job_matching.shared.exception.EntityNotFoundException;
 import com.isaac.job_matching.shared.exception.ValidationException;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -80,7 +79,7 @@ public class JobController {
             @PageableDefault(size = 20) Pageable pageable) {
 
         Page<Job> jobs;
-        
+
         if (keyword != null && !keyword.isBlank()) {
             jobs = jobService.searchJobs(keyword, pageable);
         } else if (remoteOption != null) {
@@ -141,14 +140,13 @@ public class JobController {
                 request.description(),
                 request.remoteOption(),
                 request.experienceLevel(),
-                request.employmentType()
-        );
+                request.employmentType());
 
         // Set optional fields
         if (request.location() != null) {
             job = jobService.updateJobLocation(job.getId(), request.location());
         }
-        
+
         if (request.salaryMin() != null || request.salaryMax() != null) {
             String currency = request.salaryCurrency() != null ? request.salaryCurrency() : "USD";
             Money min = request.salaryMin() != null ? new Money(request.salaryMin(), currency) : null;
@@ -227,7 +225,6 @@ public class JobController {
 
         // Update skills (replace all)
         if (request.skills() != null) {
-            Job finalJob = job;
             List<JobSkill> skills = request.skills().stream()
                     .map(input -> {
                         Skill skill = skillRepository.findByNameIgnoreCase(input.skillName())
@@ -322,8 +319,7 @@ public class JobController {
                 jobService.countJobsByCompanyAndStatus(companyId, Job.StatusName.ACTIVE),
                 jobService.countJobsByCompanyAndStatus(companyId, Job.StatusName.DRAFT),
                 jobService.countJobsByCompanyAndStatus(companyId, Job.StatusName.PAUSED),
-                jobService.countJobsByCompanyAndStatus(companyId, Job.StatusName.CLOSED)
-        ));
+                jobService.countJobsByCompanyAndStatus(companyId, Job.StatusName.CLOSED)));
     }
 
     // ================ Helper Methods ================
@@ -357,8 +353,7 @@ public class JobController {
                 job.getEmploymentType(),
                 job.getStatusName().name(),
                 job.getPostedAt(),
-                job.getDeadline()
-        );
+                job.getDeadline());
     }
 
     private JobDetailResponse toJobDetailResponse(Job job, Company company) {
@@ -379,8 +374,7 @@ public class JobController {
                 job.getStatusName().name(),
                 job.getPostedAt(),
                 job.getDeadline(),
-                skills
-        );
+                skills);
     }
 
     private CompanySummary toCompanySummary(Company company) {
@@ -389,43 +383,35 @@ public class JobController {
                 company.getName(),
                 company.getLogoUrl(),
                 company.getIndustry(),
-                company.isVerified()
-        );
+                company.isVerified());
     }
 
     // ================ Request/Response Records ================
 
     public record CreateJobRequest(
-            @NotBlank(message = "Title is required")
-            @Size(max = 255, message = "Title must not exceed 255 characters")
-            String title,
+            @NotBlank(message = "Title is required") @Size(max = 255, message = "Title must not exceed 255 characters") String title,
 
-            @NotBlank(message = "Description is required")
-            String description,
+            @NotBlank(message = "Description is required") String description,
 
             Location location,
 
-            @NotNull(message = "Remote option is required")
-            RemoteOption remoteOption,
+            @NotNull(message = "Remote option is required") RemoteOption remoteOption,
 
             BigDecimal salaryMin,
             BigDecimal salaryMax,
             String salaryCurrency,
             Boolean salaryVisible,
 
-            @NotNull(message = "Experience level is required")
-            ExperienceLevel experienceLevel,
+            @NotNull(message = "Experience level is required") ExperienceLevel experienceLevel,
 
-            @NotNull(message = "Employment type is required")
-            EmploymentType employmentType,
+            @NotNull(message = "Employment type is required") EmploymentType employmentType,
 
             List<JobSkillInput> skills,
-            LocalDate deadline
-    ) {}
+            LocalDate deadline) {
+    }
 
     public record UpdateJobRequest(
-            @Size(max = 255, message = "Title must not exceed 255 characters")
-            String title,
+            @Size(max = 255, message = "Title must not exceed 255 characters") String title,
             String description,
             Location location,
             RemoteOption remoteOption,
@@ -435,23 +421,21 @@ public class JobController {
             ExperienceLevel experienceLevel,
             EmploymentType employmentType,
             List<JobSkillInput> skills,
-            LocalDate deadline
-    ) {}
+            LocalDate deadline) {
+    }
 
     public record JobSkillInput(
-            @NotBlank(message = "Skill name is required")
-            String skillName,
+            @NotBlank(message = "Skill name is required") String skillName,
 
-            @NotNull(message = "Importance is required")
-            SkillImportance importance
-    ) {}
+            @NotNull(message = "Importance is required") SkillImportance importance) {
+    }
 
-    public record PauseJobRequest(String reason) {}
+    public record PauseJobRequest(String reason) {
+    }
 
     public record CloseJobRequest(
-            @NotNull(message = "Close reason is required")
-            JobStatus.CloseReason reason
-    ) {}
+            @NotNull(message = "Close reason is required") JobStatus.CloseReason reason) {
+    }
 
     public record JobResponse(
             UUID id,
@@ -464,8 +448,8 @@ public class JobController {
             EmploymentType employmentType,
             String status,
             java.time.Instant postedAt,
-            LocalDate deadline
-    ) {}
+            LocalDate deadline) {
+    }
 
     public record JobDetailResponse(
             UUID id,
@@ -480,27 +464,27 @@ public class JobController {
             String status,
             java.time.Instant postedAt,
             LocalDate deadline,
-            List<JobSkillResponse> skills
-    ) {}
+            List<JobSkillResponse> skills) {
+    }
 
     public record JobSkillResponse(
             String name,
-            SkillImportance importance
-    ) {}
+            SkillImportance importance) {
+    }
 
     public record CompanySummary(
             UUID id,
             String name,
             String logoUrl,
             String industry,
-            boolean verified
-    ) {}
+            boolean verified) {
+    }
 
     public record JobStatsResponse(
             long total,
             long active,
             long draft,
             long paused,
-            long closed
-    ) {}
+            long closed) {
+    }
 }
