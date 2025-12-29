@@ -1,13 +1,9 @@
 package com.isaac.job_matching.application.internal;
 
-import java.util.UUID;
-
 import com.isaac.job_matching.application.*;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
